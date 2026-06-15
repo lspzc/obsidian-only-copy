@@ -32,7 +32,7 @@ Obsidian only provides a copy button for code blocks natively, but there are man
 - Inline code `` ` ` ``: class names, commands, small code snippets
 - Bold text `** **`: keywords, important content
 
-**These formatted text contents often need to be copied frequently, yet lack a convenient way to do so.** This plugin aims to solve this problem, making any formatted text copyable with a single click.
+**These formatted text contents often need to be copied frequently, yet lack a convenient way to do so.** This plugin aims to solve this problem, making formatted text copyable with a single click.
 
 ## 3 How it works
 
