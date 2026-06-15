@@ -1,17 +1,17 @@
 <p align="center">
-  <img alt="GitHub Repo Stars" src="https://img.shields.io/github/stars/lspzc/obsidian-inlineCode-copy">
-  <img alt="GitHub Repo Forks" src="https://img.shields.io/github/forks/lspzc/obsidian-inlineCode-copy">
+  <img alt="GitHub Repo Stars" src="https://img.shields.io/github/stars/lspzc/obsidian-only-copy">
+  <img alt="GitHub Repo Forks" src="https://img.shields.io/github/forks/lspzc/obsidian-only-copy">
 </p>
 
 <p align="center">
-  <img alt="GitHub Release" src="https://img.shields.io/github/v/release/lspzc/obsidian-inlineCode-copy">
-  <img alt="GitHub Downloads (all assets, all releases)" src="https://img.shields.io/github/downloads/lspzc/obsidian-inlineCode-copy/total">
-  <img alt="GitHub Repo License" src="https://img.shields.io/github/license/lspzc/obsidian-inlineCode-copy">
-  <img alt="GitHub Repo Issues" src="https://img.shields.io/github/issues/lspzc/obsidian-inlineCode-copy">
+  <img alt="GitHub Release" src="https://img.shields.io/github/v/release/lspzc/obsidian-only-copy">
+  <img alt="GitHub Downloads (all assets, all releases)" src="https://img.shields.io/github/downloads/lspzc/obsidian-only-copy/total">
+  <img alt="GitHub Repo License" src="https://img.shields.io/github/license/lspzc/obsidian-only-copy">
+  <img alt="GitHub Repo Issues" src="https://img.shields.io/github/issues/lspzc/obsidian-only-copy">
 </p>
 
 <p align="center">
-  <a href="https://github.com/lspzc/obsidian-inlineCode-copy/releases">Download</a> |
+  <a href="https://github.com/lspzc/obsidian-only-copy/releases">Download</a> |
   English |
   <a href="./README.md">中文</a>
 </p>
