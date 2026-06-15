@@ -5,7 +5,7 @@ on:
         tags:
             - "*"
 env:
-    PLUGIN_NAME: inline-code-copy
+    PLUGIN_NAME: lspzc-only-copy
 
 jobs:
     build:
