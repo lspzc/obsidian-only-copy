@@ -12,14 +12,28 @@ interface I18nContent {
 	language: string;
 	/** 语言设置项描述 */
 	languageDesc: string;
-	/** 启用阅读视图复制设置项名称 */
-	enableReadingView: string;
-	/** 启用阅读视图复制设置项描述 */
-	enableReadingViewDesc: string;
-	/** 启用实时预览设置项名称 */
-	enableLivePreview: string;
-	/** 启用实时预览设置项描述 */
-	enableLivePreviewDesc: string;
+	/** 行内代码设置分区标题 */
+	inlineCodeSection: string;
+	/** 行内代码启用阅读视图复制设置项名称 */
+	enableInlineCodeReadingView: string;
+	/** 行内代码启用阅读视图复制设置项描述 */
+	enableInlineCodeReadingViewDesc: string;
+	/** 行内代码启用实时预览复制设置项名称 */
+	enableInlineCodeLivePreview: string;
+	/** 行内代码启用实时预览复制设置项描述 */
+	enableInlineCodeLivePreviewDesc: string;
+	/** 加粗文本设置分区标题 */
+	boldSection: string;
+	/** 加粗文本启用阅读视图复制设置项名称 */
+	enableBoldReadingView: string;
+	/** 加粗文本启用阅读视图复制设置项描述 */
+	enableBoldReadingViewDesc: string;
+	/** 加粗文本启用实时预览复制设置项名称 */
+	enableBoldLivePreview: string;
+	/** 加粗文本启用实时预览复制设置项描述 */
+	enableBoldLivePreviewDesc: string;
+	/** 气泡提示设置分区标题 */
+	bubbleSection: string;
 	/** 是否显示复制文本设置项名称 */
 	showBubbleText: string;
 	/** 是否显示复制文本设置项描述 */
@@ -48,12 +62,21 @@ export const i18n: I18n = {
 		settingsTitle: "lspzc x only copy Settings",
 		language: "Language",
 		languageDesc: "Select display language for the settings interface",
-		enableReadingView: "Inline Code Enable Reading View Copy",
-		enableReadingViewDesc:
+		inlineCodeSection: "Inline Code",
+		enableInlineCodeReadingView: "Enable Reading View Copy",
+		enableInlineCodeReadingViewDesc:
 			"When enabled, click inline code in reading view to copy its content",
-		enableLivePreview: "Inline Code Enable Live Preview Copy",
-		enableLivePreviewDesc:
+		enableInlineCodeLivePreview: "Enable Live Preview Copy",
+		enableInlineCodeLivePreviewDesc:
 			"When enabled, double-click inline code in editing mode to copy its content",
+		boldSection: "Bold Text",
+		enableBoldReadingView: "Enable Reading View Copy",
+		enableBoldReadingViewDesc:
+			"When enabled, click bold text in reading view to copy its content",
+		enableBoldLivePreview: "Enable Live Preview Copy",
+		enableBoldLivePreviewDesc:
+			"When enabled, double-click bold text in editing mode to copy its content",
+		bubbleSection: "Bubble Notification",
 		showBubbleText: "Show Copied Text in Bubble",
 		showBubbleTextDesc:
 			"When enabled, the copied text is displayed in the bubble notification",
@@ -61,7 +84,7 @@ export const i18n: I18n = {
 		bubbleDurationDesc: "How long the bubble notification stays visible",
 		feedbackDuration: "Feedback Duration (ms)",
 		feedbackDurationDesc:
-			"When enabled, the highlight effect lasts after copying inline code in reading view",
+			"How long the highlight effect lasts after copying in reading view",
 	},
 	zh: {
 		copied: (text: string) => `已复制: ${text}`,
@@ -70,12 +93,21 @@ export const i18n: I18n = {
 		settingsTitle: "lspzc x only copy 设置",
 		language: "语言",
 		languageDesc: "选择设置界面的显示语言",
-		enableReadingView: "行内代码启用阅读视图复制",
-		enableReadingViewDesc:
+		inlineCodeSection: "行内代码",
+		enableInlineCodeReadingView: "启用阅读视图复制",
+		enableInlineCodeReadingViewDesc:
 			"启用后，在阅读视图中单击行内代码即可复制其内容",
-		enableLivePreview: "行内代码启用实时预览复制",
-		enableLivePreviewDesc:
+		enableInlineCodeLivePreview: "启用实时预览复制",
+		enableInlineCodeLivePreviewDesc:
 			"启用后，在编辑模式下双击行内代码即可复制其内容",
+		boldSection: "加粗文本",
+		enableBoldReadingView: "启用阅读视图复制",
+		enableBoldReadingViewDesc:
+			"启用后，在阅读视图中单击加粗文本即可复制其内容",
+		enableBoldLivePreview: "启用实时预览复制",
+		enableBoldLivePreviewDesc:
+			"启用后，在编辑模式下双击加粗文本即可复制其内容",
+		bubbleSection: "气泡提示",
 		showBubbleText: "气泡显示复制文本",
 		showBubbleTextDesc: "启用后，气泡提示中会显示被复制的文本内容",
 		bubbleDuration: "气泡显示时间(毫秒)",

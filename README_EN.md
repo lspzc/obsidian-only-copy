@@ -16,30 +16,29 @@
   <a href="./README.md">中文</a>
 </p>
 
-# Plug-in: Inline Code Copy Documentation
+# Plug-in: lspzc x only copy Documentation
 
 ## 1 What is it?
 
-An Obsidian plugin
+An Obsidian text copy plugin
 Plugin name: lspzc x only copy
 
-What the plugin does: Copy inline code with a single click (reading view) or double click (live preview).
+What the plugin does: Quickly copy Markdown formatted text content with a single click (reading view) or double click (live preview). Currently supports inline code and bold text, with more text types to be added in the future.
 
 ## 2 Why
 
-Inline code syntax
+Obsidian only provides a copy button for code blocks natively, but there are many other Markdown text formats that need quick copying:
 
-```md
-` `
-```
+- Inline code `` ` ` ``: class names, commands, small code snippets
+- Bold text `** **`: keywords, important content
 
-There are a lot of situations where you need to use inline code, such as some class names, some very small code snippets, some special text that conflicts with md syntax, or even some text that you want to copy at a later time, **but Obsidian strangely has code block copying, but not inline code copying**.
+**These formatted text contents often need to be copied frequently, yet lack a convenient way to do so.** This plugin aims to solve this problem, making any formatted text copyable with a single click.
 
 ## 3 How it works
 
 ### 3.1 Plugin environment
 
-Plugin development test environment: Windows 11, Obsidian version 1.8.10
+Plugin development test environment: Windows 11, Obsidian version latest version
 
 Since I don't have a Mac device, I didn't test it. **I suggest you find a test library and try it first**.
 
@@ -63,25 +62,25 @@ Without going into too much detail here
 
 Support one-click switching between Chinese and English in the settings interface, default is Chinese
 
-#### Enable Reading View Copy
+#### Inline Code
 
-Enabled by default. When enabled, click inline code in reading view to copy its content.
+- **Enable Reading View Copy**: Enabled by default. When enabled, click inline code in reading view to copy its content.
+- **Enable Live Preview Copy**: Enabled by default. When enabled, double-click inline code in editing mode to copy its content.
 
-#### Enable Live Preview Copy
+#### Bold Text
 
-Enabled by default. When enabled, double-click inline code in editing mode to copy its content.
+- **Enable Reading View Copy**: Disabled by default. When enabled, click bold text in reading view to copy its content.
+- **Enable Live Preview Copy**: Disabled by default. When enabled, double-click bold text in editing mode to copy its content.
 
-#### Show Copied Text in Bubble
+#### Bubble Notification
 
-Enabled by default. After a successful copy, a bubble notification will appear above the inline code. The bubble style follows Google Material Design and automatically adapts to Obsidian's light/dark mode:
+- **Show Copied Text in Bubble**: Enabled by default. After a successful copy, a bubble notification will appear above the element. The bubble style follows Google Material Design and automatically adapts to Obsidian's light/dark mode:
+  - Light mode: light background + dark text
+  - Dark mode: dark background + light text
+  - When the content is too long, the excess part in the bubble will be replaced with an ellipsis.
+- **Bubble Duration**: How long the bubble notification stays visible.
+- **Feedback Duration**: How long the highlight effect lasts after copying in reading view (only applies to reading view, because double clicking in edit mode triggers Obsidian's text selection).
 
-- Light mode: light background + dark text
-- Dark mode: dark background + light text
+## 4 Roadmap
 
-When the inline code content is too long, the excess part in the bubble will be replaced with an ellipsis.
-
-#### Bubble Duration and Feedback Effect Duration
-
-Duration is up to your preference
-
-Feedback effect time: only in reading view (because double clicking on Obsidian in edit mode gives you the selected style)
+This plugin is positioned as a general text copy plugin. Future plans include supporting more Markdown text types such as italic, strikethrough, highlight, links, etc. If you have other needs, feel free to open an Issue.

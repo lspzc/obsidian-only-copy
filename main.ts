@@ -11,10 +11,14 @@ const BUBBLE_MAX_TEXT_LENGTH = 30;
 
 /** 插件设置项接口 */
 interface ClickToCopySettings {
-	/** 是否启用阅读视图下的复制功能 */
-	enableReadingView: boolean;
-	/** 是否启用实时预览模式下的复制功能（双击触发） */
-	enableLivePreview: boolean;
+	/** 是否启用阅读视图下行内代码的复制功能 */
+	enableInlineCodeReadingView: boolean;
+	/** 是否启用实时预览模式下行内代码的复制功能（双击触发） */
+	enableInlineCodeLivePreview: boolean;
+	/** 是否启用阅读视图下加粗文本的复制功能 */
+	enableBoldReadingView: boolean;
+	/** 是否启用实时预览模式下加粗文本的复制功能（双击触发） */
+	enableBoldLivePreview: boolean;
 	/** 气泡中是否显示复制的文本内容 */
 	showBubbleText: boolean;
 	/** 气泡显示持续时间（毫秒） */
@@ -27,8 +31,10 @@ interface ClickToCopySettings {
 
 /** 默认设置值 */
 const DEFAULT_SETTINGS: ClickToCopySettings = {
-	enableReadingView: true,
-	enableLivePreview: true,
+	enableInlineCodeReadingView: true,
+	enableInlineCodeLivePreview: true,
+	enableBoldReadingView: false,
+	enableBoldLivePreview: false,
 	showBubbleText: true,
 	bubbleDuration: 1500,
 	feedbackDuration: 1500,
@@ -36,9 +42,8 @@ const DEFAULT_SETTINGS: ClickToCopySettings = {
 };
 
 /**
- * Inline Code Copy 插件主类
- * 插件名称：lspzc x only copy
- * 功能：单击（阅读视图）或双击（实时预览）复制行内容到剪贴板
+ * lspzc x only copy 插件主类
+ * 功能：单击（阅读视图）或双击（实时预览）复制行内代码和加粗文本
  */
 export default class ClickToCopyPlugin extends Plugin {
 	settings: ClickToCopySettings;
@@ -54,7 +59,7 @@ export default class ClickToCopyPlugin extends Plugin {
 	async onload() {
 		await this.loadSettings();
 
-		// 注册阅读模式点击事件（仅处理行内代码，排除代码块）
+		// 注册阅读模式单击事件
 		this.registerDomEvent(document, "click", this.handleClick.bind(this));
 
 		// 注册实时预览模式双击事件
@@ -79,79 +84,129 @@ export default class ClickToCopyPlugin extends Plugin {
 	}
 
 	/**
-	 * 处理阅读模式下的点击事件
-	 * 仅响应行内代码（code），排除代码块（pre > code）
+	 * 处理阅读模式下的单击事件
+	 * 根据点击目标判断是行内代码还是加粗文本，分别处理
 	 */
 	private handleClick(event: MouseEvent) {
-		// 检查是否启用阅读视图复制
-		if (!this.settings.enableReadingView) return;
-
 		const target = event.target as HTMLElement;
 
-		// 查找被点击的 code 元素
-		const codeElement = target.closest(
-			".markdown-reading-view code"
-		) as HTMLElement | null;
-		if (!codeElement) return;
+		// 处理行内代码点击
+		if (this.settings.enableInlineCodeReadingView) {
+			const codeElement = target.closest(
+				".markdown-reading-view code"
+			) as HTMLElement | null;
+			if (codeElement && !codeElement.closest("pre")) {
+				this.processElement(codeElement, "code");
+				return;
+			}
+		}
 
-		// 排除代码块：代码块中的 code 被 pre 元素包裹
-		if (codeElement.closest("pre")) return;
-
-		this.processCodeElement(codeElement);
+		// 处理加粗文本点击
+		if (this.settings.enableBoldReadingView) {
+			const boldElement = target.closest(
+				".markdown-reading-view strong"
+			) as HTMLElement | null;
+			if (boldElement) {
+				this.processElement(boldElement, "bold");
+				return;
+			}
+		}
 	}
 
 	/**
 	 * 处理实时预览模式下的双击事件
-	 * 仅当启用实时预览时生效，固定使用双击触发
+	 * 根据点击目标判断是行内代码还是加粗文本，分别处理
 	 */
 	private handleDoubleClick(event: MouseEvent) {
-		if (!this.settings.enableLivePreview) return;
-
 		const target = event.target as HTMLElement;
-		const codeElement = target.closest(
-			".cm-content span.cm-inline-code"
-		) as HTMLElement | null;
-		if (!codeElement) return;
 
-		this.processCodeElement(codeElement);
+		// 处理行内代码双击
+		if (this.settings.enableInlineCodeLivePreview) {
+			const codeElement = target.closest(
+				".cm-content span.cm-inline-code"
+			) as HTMLElement | null;
+			if (codeElement) {
+				// 查找实际内容元素（排除格式化符号元素）
+				const contentElement = this.findContentElement(codeElement, "cm-inline-code");
+				if (contentElement) {
+					this.processElement(contentElement, "code");
+					return;
+				}
+			}
+		}
+
+		// 处理加粗文本双击
+		if (this.settings.enableBoldLivePreview) {
+			const boldElement = target.closest(
+				".cm-content .cm-strong"
+			) as HTMLElement | null;
+			if (boldElement) {
+				// 查找实际内容元素（排除格式化符号元素）
+				const contentElement = this.findContentElement(boldElement, "cm-strong");
+				if (contentElement) {
+					this.processElement(contentElement, "bold");
+					return;
+				}
+			}
+		}
 	}
 
 	/**
-	 * 处理代码元素的复制逻辑
-	 * 1. 提取代码文本（去除反引号包裹）
-	 * 2. 复制到剪贴板
-	 * 3. 显示视觉反馈和气泡提示
+	 * 查找实际内容元素
+	 * 在实时预览模式下，Markdown 语法符号（如 `**` 或反引号）和实际文本
+	 * 会被分别渲染为独立的 span 元素，格式化符号带有 cm-formatting 类名。
+	 * 当用户点击到格式化符号时，需要找到包含实际文本内容的兄弟元素。
+	 * @param element - 通过 closest 找到的元素
+	 * @param className - 内容元素的类名（cm-inline-code 或 cm-strong）
+	 * @returns 包含实际文本内容的元素，若找不到则返回 null
 	 */
-	private processCodeElement(codeElement: HTMLElement) {
-		// 获取代码文本，去除可能存在的反引号包裹
-		const rawText = codeElement.textContent || "";
-		let codeContent = rawText;
-		if (rawText.startsWith("`") && rawText.endsWith("`")) {
-			codeContent = rawText.slice(1, -1);
+	private findContentElement(element: HTMLElement, className: string): HTMLElement | null {
+		// 如果当前元素不是格式化符号，直接返回
+		if (!element.classList.contains("cm-formatting")) {
+			return element;
 		}
 
+		// 点击到了格式化符号，在其父元素中查找实际内容元素
+		const parent = element.parentElement;
+		if (!parent) return null;
+
+		// 查找同层级中不带 cm-formatting 类名的目标元素
+		const contentElement = parent.querySelector(
+			`:scope > .${className}:not(.cm-formatting)`
+		) as HTMLElement | null;
+		return contentElement;
+	}
+
+	/**
+	 * 处理元素的复制逻辑
+	 * @param element - 被点击的 DOM 元素
+	 * @param type - 元素类型："code" 行内代码 或 "bold" 加粗文本
+	 */
+	private processElement(element: HTMLElement, type: "code" | "bold") {
+		// 提取纯文本内容（去除 Markdown 语法符号）
+		const content = this.extractContent(element, type);
+		if (!content) return; // 内容为空则跳过
+
 		// 执行复制操作
-		this.copyToClipboard(codeContent)
+		this.copyToClipboard(content)
 			.then((success) => {
 				if (success) {
 					// 添加视觉反馈（高亮效果）
-					codeElement.classList.add("copied");
+					element.classList.add("copied");
 					const feedbackId = window.setTimeout(() => {
-						codeElement.classList.remove("copied");
+						element.classList.remove("copied");
 					}, this.settings.feedbackDuration);
 					this.feedbackTimeoutIds.push(feedbackId);
 
 					// 显示气泡提示
 					const lang = this.settings.language;
 					const bubbleText = this.settings.showBubbleText
-						? i18n[lang].copied(
-							this.truncateText(codeContent)
-						)
+						? i18n[lang].copied(this.truncateText(content))
 						: i18n[lang].copySuccess;
-					this.showBubble(codeElement, bubbleText);
+					this.showBubble(element, bubbleText);
 				} else {
 					this.showBubble(
-						codeElement,
+						element,
 						i18n[this.settings.language].copyFailed
 					);
 				}
@@ -159,10 +214,32 @@ export default class ClickToCopyPlugin extends Plugin {
 			.catch((err) => {
 				console.error("Failed to copy: ", err);
 				this.showBubble(
-					codeElement,
+					element,
 					i18n[this.settings.language].copyFailed
 				);
 			});
+	}
+
+	/**
+	 * 从元素中提取纯文本内容，去除 Markdown 语法符号
+	 * 在实时预览模式下，textContent 可能包含语法符号（如 `**text**` 或 `` `text` ``），
+	 * 需要将其去除以获取实际文本内容。
+	 * @param element - DOM 元素
+	 * @param type - 元素类型："code" 行内代码 或 "bold" 加粗文本
+	 * @returns 去除语法符号后的纯文本内容
+	 */
+	private extractContent(element: HTMLElement, type: "code" | "bold"): string {
+		let text = element.textContent || "";
+
+		if (type === "code") {
+			// 去除反引号包裹（支持单个或多个反引号，如 ``text``）
+			text = text.replace(/^`+/, "").replace(/`+$/, "");
+		} else if (type === "bold") {
+			// 去除加粗标记包裹（** 或 __）
+			text = text.replace(/^\*\*|^__/, "").replace(/\*\*$|__$/, "");
+		}
+
+		return text;
 	}
 
 	/**
@@ -303,7 +380,7 @@ export default class ClickToCopyPlugin extends Plugin {
 
 /**
  * 插件设置面板
- * 提供语言、阅读视图、实时预览、气泡提示等配置项
+ * 提供语言、行内代码、加粗文本、气泡提示等配置项
  */
 class ClickToCopySettingTab extends PluginSettingTab {
 	plugin: ClickToCopyPlugin;
@@ -320,7 +397,7 @@ class ClickToCopySettingTab extends PluginSettingTab {
 		const lang = this.plugin.settings.language;
 		const t = i18n[lang];
 
-		// 语言设置
+		// ===== 语言设置 =====
 		new Setting(containerEl)
 			.setName(t.language)
 			.setDesc(t.languageDesc)
@@ -337,33 +414,63 @@ class ClickToCopySettingTab extends PluginSettingTab {
 					})
 			);
 
-		// 阅读视图复制开关
+		// ===== 行内代码设置 =====
+		containerEl.createEl("h3", { text: t.inlineCodeSection });
+
 		new Setting(containerEl)
-			.setName(t.enableReadingView)
-			.setDesc(t.enableReadingViewDesc)
+			.setName(t.enableInlineCodeReadingView)
+			.setDesc(t.enableInlineCodeReadingViewDesc)
 			.addToggle((toggle) =>
 				toggle
-					.setValue(this.plugin.settings.enableReadingView)
+					.setValue(this.plugin.settings.enableInlineCodeReadingView)
 					.onChange(async (value) => {
-						this.plugin.settings.enableReadingView = value;
+						this.plugin.settings.enableInlineCodeReadingView = value;
 						await this.plugin.saveSettings();
 					})
 			);
 
-		// 实时预览模式开关（固定双击触发）
 		new Setting(containerEl)
-			.setName(t.enableLivePreview)
-			.setDesc(t.enableLivePreviewDesc)
+			.setName(t.enableInlineCodeLivePreview)
+			.setDesc(t.enableInlineCodeLivePreviewDesc)
 			.addToggle((toggle) =>
 				toggle
-					.setValue(this.plugin.settings.enableLivePreview)
+					.setValue(this.plugin.settings.enableInlineCodeLivePreview)
 					.onChange(async (value) => {
-						this.plugin.settings.enableLivePreview = value;
+						this.plugin.settings.enableInlineCodeLivePreview = value;
 						await this.plugin.saveSettings();
 					})
 			);
 
-		// 气泡中是否显示复制文本
+		// ===== 加粗文本设置 =====
+		containerEl.createEl("h3", { text: t.boldSection });
+
+		new Setting(containerEl)
+			.setName(t.enableBoldReadingView)
+			.setDesc(t.enableBoldReadingViewDesc)
+			.addToggle((toggle) =>
+				toggle
+					.setValue(this.plugin.settings.enableBoldReadingView)
+					.onChange(async (value) => {
+						this.plugin.settings.enableBoldReadingView = value;
+						await this.plugin.saveSettings();
+					})
+			);
+
+		new Setting(containerEl)
+			.setName(t.enableBoldLivePreview)
+			.setDesc(t.enableBoldLivePreviewDesc)
+			.addToggle((toggle) =>
+				toggle
+					.setValue(this.plugin.settings.enableBoldLivePreview)
+					.onChange(async (value) => {
+						this.plugin.settings.enableBoldLivePreview = value;
+						await this.plugin.saveSettings();
+					})
+			);
+
+		// ===== 气泡提示设置 =====
+		containerEl.createEl("h3", { text: t.bubbleSection });
+
 		new Setting(containerEl)
 			.setName(t.showBubbleText)
 			.setDesc(t.showBubbleTextDesc)
@@ -376,7 +483,6 @@ class ClickToCopySettingTab extends PluginSettingTab {
 					})
 			);
 
-		// 气泡显示时间
 		new Setting(containerEl)
 			.setName(t.bubbleDuration)
 			.setDesc(t.bubbleDurationDesc)
@@ -391,7 +497,6 @@ class ClickToCopySettingTab extends PluginSettingTab {
 					});
 			});
 
-		// 视觉反馈时间
 		new Setting(containerEl)
 			.setName(t.feedbackDuration)
 			.setDesc(t.feedbackDurationDesc)

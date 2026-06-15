@@ -10,6 +10,17 @@
     transition: background-color 0.3s ease;
 }
 
+/* ===== 加粗文本指针样式 ===== */
+.markdown-reading-view strong {
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.cm-content .cm-strong {
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
 /* ===== 气泡样式 - Google Material Design 风格 ===== */
 .click-to-copy-bubble {
     position: absolute;
