@@ -1,10 +1,11 @@
 {
-	"id": "inline-code-copy",
-	"name": "Inline Code Copy",
+	"id": "lspzc-only-copy",
+	"name": "lspzc x only copy",
 	"version": "1.1.8",
-	"minAppVersion": "1.11.4",
-	"description": "Click to copy inline code snippets",
+	"minAppVersion": "1.0.0",
+	"description": "复制，仅此而已",
 	"author": "lspzc",
-	"authorUrl": "https://github.com/lspzc/obsidian-inlineCode-copy",
+	"authorUrl": "https://github.com/lspzc/obsidian-only-copy",
+	"fundingUrl": "https://github.com/lspzc/obsidian-only-copy/issues",
 	"isDesktopOnly": false
 }

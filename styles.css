@@ -1,5 +1,6 @@
-/* 基础样式 */
-.markdown-reading-view code {
+/* ===== 行内代码指针样式 ===== */
+/* 仅对行内代码显示指针，排除代码块（pre > code） */
+.markdown-reading-view code:not(pre code) {
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
@@ -9,27 +10,45 @@
     transition: background-color 0.3s ease;
 }
 
-/* 气泡基础样式 */
+/* ===== 气泡样式 - Google Material Design 风格 ===== */
 .click-to-copy-bubble {
     position: absolute;
-    padding: 10px 15px;
+    padding: 8px 16px;
     border-radius: 8px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    z-index: 10000;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
-    max-width: 300px;
-    word-break: break-word;
-    animation: bubbleAppear 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    backdrop-filter: blur(4px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    max-width: 280px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    z-index: 10000;
+    pointer-events: none;
+    animation: bubbleAppear 0.2s cubic-bezier(0, 0, 0.2, 1);
 }
 
-/* 动画 */
+/* 亮色模式气泡：浅色背景 + 深色文字 */
+.click-to-copy-bubble.bubble-light {
+    background: #ffffff;
+    color: #1f1f1f;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
+        0 4px 8px 3px rgba(0, 0, 0, 0.07);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+/* 暗色模式气泡：深色背景 + 浅色文字 */
+.click-to-copy-bubble.bubble-dark {
+    background: #2d2d2d;
+    color: #e8eaed;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3),
+        0 4px 8px 3px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ===== 气泡动画 ===== */
 @keyframes bubbleAppear {
     0% {
         opacity: 0;
-        transform: translateY(10px) scale(0.9);
+        transform: translateY(4px) scale(0.95);
     }
 
     100% {
@@ -39,7 +58,7 @@
 }
 
 .fade-out {
-    animation: bubbleDisappear 0.3s forwards !important;
+    animation: bubbleDisappear 0.2s forwards !important;
 }
 
 @keyframes bubbleDisappear {
@@ -50,11 +69,11 @@
 
     100% {
         opacity: 0;
-        transform: translateY(-10px) scale(0.9);
+        transform: translateY(-4px) scale(0.95);
     }
 }
 
-/* 阅读模式特殊处理，同时适配亮暗模式 */
+/* ===== 阅读模式复制成功高亮效果 ===== */
 .theme-light .markdown-reading-view .copied {
     background-color: rgba(46, 204, 113, 0.15) !important;
 }
@@ -63,44 +82,8 @@
     background-color: rgba(46, 204, 113, 0.25) !important;
 }
 
-/* 滑块样式增强 */
+/* ===== 设置面板滑块样式 ===== */
 .setting-item-control input[type="range"] {
     width: 200px;
     margin-right: 10px;
-}
-
-/* ===== 用户设置界面样式 ===== */
-.tip {
-    border: 1px solid var(--background-modifier-border);
-    border-radius: 8px;
-    padding: 16px;
-    margin-bottom: 20px;
-    background-color: var(--background-primary-alt);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-.tip_title {
-    font-weight: 600;
-    color: var(--text-accent);
-    margin-bottom: 8px;
-    font-size: 16px;
-}
-
-.tip_txt {
-    color: var(--text-muted);
-    white-space: pre-line;
-    line-height: 1.5;
-    font-size: 14px;
-}
-
-.inline-code-copy-smallTip-link {
-    text-decoration: none;
-    color: var(--text-accent);
-    font-weight: 500;
-    transition: color 0.2s ease;
-}
-
-.inline-code-copy-smallTip-link:hover {
-    color: var(--text-accent-hover);
-    text-decoration: underline;
 }
