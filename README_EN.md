@@ -48,9 +48,7 @@ Mobile not tested
 
 Currently, the plugin is not yet on the plugin market, so you need to download the plugin by yourself.
 
-GitHub address: [lspzc/obsidian-inlineCode-copy](https://github.com/lspzc/obsidian-inlineCode-copy)
-
-Gitee address: [lspzc/obsidian-share](https://gitee.com/lspzc/obsidain-share)
+GitHub address: [lspzc/obsidian-only-copy](https://github.com/lspzc/obsidian-only-copy)
 
 ### 3.3 Installing Plugins
 
